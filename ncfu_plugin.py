@@ -28,23 +28,30 @@ from qgis.PyQt.QtWidgets import QAction
 
 # Инициализировать ресурсы Qt из файла resources.py
 from .resources import *
+
 # Импорт код для диалогового окна
 from .ncfu_plugin_dialog import NcfuPluginDialog
+
+# Импорт классов
+from .decimal_to_degree import DecimalToDegree
+from .error_handler import ErrorHandler
+
 # Прочие импорты
 import os.path
 import qgis.utils
-from math import trunc
 
 
 class NcfuPlugin:
-    """Главный класс плагина QGIS."""
+    """Главный класс плагина."""
 
     def __init__(self, iface):
         """Конструктор. """
-        # Сохранить ссылку на интерфейс QGIS
-        self.iface = iface
-        # инициализировать катол плагина
-        self.plugin_dir = os.path.dirname(__file__)
+        
+        self.iface = iface # Сохранить ссылку на интерфейс QGIS
+        self.infoBar = self.iface.messageBar()
+
+        self.plugin_dir = os.path.dirname(__file__) # инициализировать катол плагина
+
         # инициализировать locale
         locale = QSettings().value('locale/userLocale')[0:2]
         locale_path = os.path.join(
@@ -61,8 +68,7 @@ class NcfuPlugin:
         self.actions = []
         self.menu = self.tr(u'&NCFU KGI-161')
 
-        # Проверить, был ли плагин запущен в первый раз в текущей сессии QGIS
-        self.first_start = None
+        self.first_start = None # Проверка на первый запуск текущей сессии QGIS
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -118,7 +124,6 @@ class NcfuPlugin:
         # будет установлено False при run()
         self.first_start = True
 
-
     def unload(self):
         """Удаляет пункт меню и значок плагина из QGIS GUI."""
         for action in self.actions:
@@ -127,83 +132,15 @@ class NcfuPlugin:
                 action)
             self.iface.removeToolBarIcon(action)
 
-    def checkOnErrors(self,layer,dp):
-        """Проверка всех условий"""
-        if layer.geometryType() != 0:
-            self.iface.messageBar().pushMessage("Выберите слой с точками!", Qgis.Warning )
-            return False
-
-        elif dp.fieldNameIndex('xcoord') == -1:
-            self.lostAttr('xcoord')
-            return False
-
-        elif dp.fieldNameIndex('ycoord') == -1:
-            self.lostAttr('ycoord')
-            return False
-
-        else: return True
-
-    def createField(self,dp,way):
-        """Создать новое поле"""
-        
-        dp.addAttributes([QgsField(way,QVariant.String)])
-        print('Создан новый атрибут \"' +way+'\"')
-
-    def convertToGraduses(self,ddd):
-        """Конвертировать в градусы"""
-
-        # Сократить число до определенного числа
-        def toFixed(numObj, digits=0):
-            return f"{numObj:.{digits}f}"
-
-        countMs = self.dlg.spinBox.value() # Параметр сокращения миллисекунд
-
-        # Формула перевода в градусную систему координат
-        dd = trunc(ddd)                   # Граудсы = TRUNC(DDD)    
-        mm = trunc( (ddd - dd) * 60 )     # Минуты  = TRUNC((DDD − DD) * 60)
-        ss = ( (ddd-dd) * 60 - mm ) * 60  # Секунды = ((DDD − DD) * 60 − MM) * 60
-
-        ss = toFixed(ss,countMs)
-        ss = str(ss).replace('.', '\" ')
-
-        # Переобразовать в читаемый формат
-        grads = str(dd)+'° '+str(mm)+" \' "+ss
-
-        return grads    
-
-    def fillAttr(self,features, dp):
-        """Заполнить атрибуты """
-        
-        xAttrInd = dp.fieldNameIndex('xcoord_grds')
-        yAttrInd = dp.fieldNameIndex('ycoord_grds')
-
-        # Цикл с точками
-        for feat in features:
-
-            # Получить значения десятичных координат
-            valX = feat.attribute('xcoord')
-            valY = feat.attribute('ycoord')
-
-            # Результат конвертации присвоить новым переменным
-            gradsX = self.convertToGraduses( valX )
-            gradsY = self.convertToGraduses( valY )
-
-            # Объявление новых атрибутов
-            newXAttr = {xAttrInd : gradsX }
-            newYAttr = {yAttrInd : gradsY }
-
-            # Изменить значения атрибутов
-            dp.changeAttributeValues({ feat.id(): newXAttr })
-            dp.changeAttributeValues({ feat.id(): newYAttr })
-
     def run(self):
         """Главный запуск """
 
         if self.first_start == True:
             self.first_start = False  # смена значения у первого запуска
             self.dlg = NcfuPluginDialog() # установка диалогового окна
-    
-        # Поле из 
+       
+    #    Получить значения из диалогового окна
+        countMs = self.dlg.spinBox.value()
         cmBox = self.dlg.comboBox
         cmBox.clear()
 
@@ -212,45 +149,45 @@ class NcfuPlugin:
         
         # Получить все слои QGIS
         allLayers = self.iface.mapCanvas().layers()
-        showLayers = []
+        activeLayers = []
 
         for l in allLayers:
-            showLayers.append(l.name())
+            activeLayers.append(l.name())
 
-        cmBox.addItems(showLayers)        
-
-        # Запустить цикл событий диалога
+        cmBox.addItems(activeLayers)
         result = self.dlg.exec_()
 
         # Выполнить функционал после нажатия "ОК" в модальном окне
         if result:
             """ Главный алгоритм действий """
-            layer = allLayers[ cmBox.currentIndex() ]
+
+            layer = allLayers[ cmBox.currentIndex() ]  # Получить текущий слой
+
+            # Если слой не подходит по условиям – отмена
             if not layer:
-                self.iface.messageBar().pushMessage("Слой не выбран", Qgis.Critical )
+                self.infoBar.pushMessage("Слой не выбран", Qgis.Critical )
                 return
 
+            # Объявление переменных
             dp = layer.dataProvider()
-
-            # Проверка поддерживаемости слоя
-            if not self.checkOnErrors(layer,dp): return
-
             successMessage = "Координаты обновлены!"
+
+            if not ErrorHandler.checkOnErrors(self.infoBar ,layer,dp): return
 
             # Создать градусные атрибуты если их нет
             if dp.fieldNameIndex('xcoord_grds') == -1 or dp.fieldNameIndex('xcoord_grds') == -1:
-                self.createField(dp,'xcoord_grds')
-                self.createField(dp,'ycoord_grds')
+
+                DecimalToDegree.createField(dp,'xcoord_grds')
+                DecimalToDegree.createField(dp,'ycoord_grds')
+
                 successMessage = "Координаты созданы!"
 
-            features = layer.getFeatures()
-
             # Заполнить атрибуты 
-            self.fillAttr(features, dp)
+            DecimalToDegree.fillAttr( layer.getFeatures(), dp, countMs )
 
             # Обновить данные
             layer.updateFields()
 
             # Уведомить пользователя об успешном выполнении
-            self.iface.messageBar().pushMessage(successMessage, Qgis.Success )
+            self.infoBar.pushMessage(successMessage, Qgis.Success )
             print('Операция выполнена успешна!')

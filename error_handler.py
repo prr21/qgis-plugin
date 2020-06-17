@@ -1,29 +1,42 @@
+# Импорт QGIS компонента
+from qgis.core import Qgis
 
 class ErrorHandler:
-    # def __init__(self, pushTo):
-    #     self.pushTo = pushTo
-    #     print(pushTo)
 
-    def checkOnErrors(pushTo, layer, dp):
+    def __init__(self, infoBar, layer, dp):
+        """Конструктор"""
+
+        # Присвоить полученные значения
+        self.infoBar = infoBar
+        self.layer = layer
+        self.dp = dp
+
+    def checkOnErrsGrad(self):
         """Проверка всех условий """
+
+        # Деструктуризация
+        dp = self.dp
+        layer = self.layer
+        infoBar = self.infoBar
 
         # Если с точками не выбран
         if layer.geometryType() != 0:
-            pushTo.pushMessage("Выберите слой с точками!", Qgis.Warning )
+            infoBar.pushMessage("Выберите слой с точками!", Qgis.Warning )
             return False
 
         # Проверка наличе необходимых атрибутов
         elif dp.fieldNameIndex('xcoord') == -1:
-            pushTo.lostAttr('xcoord')
+            self.lostAttr('xcoord')
             return False
 
         elif dp.fieldNameIndex('ycoord') == -1:
-            pushTo.lostAttr('ycoord')
+            self.lostAttr('ycoord')
             return False
 
         else: return True
 
-    def lostAttr(attr):
+    def lostAttr(self, attr):
         """Указать какой атрибут отсутствует """
-        pushTo.iface.pushMessage("Отсуствуют необходимый атрибут " + attr + " с координатами", Qgis.Warning )
+
+        self.infoBar.pushMessage("Отсуствуют необходимый атрибут " + attr + " с координатами", Qgis.Warning )
         return

@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-# Главные импорты QGIS функционала
+# Импорты QGIS компонентов
 from qgis.core import *
 from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtGui import QIcon
@@ -47,10 +47,9 @@ class NcfuPlugin:
     def __init__(self, iface):
         """Конструктор. """
         
-        self.iface = iface # Сохранить ссылку на интерфейс QGIS
-        self.infoBar = self.iface.messageBar()
-
-        self.plugin_dir = os.path.dirname(__file__) # инициализировать катол плагина
+        self.iface = iface                          # Сохранить ссылку на интерфейс QGIS
+        self.infoBar = self.iface.messageBar()      # Сохранить ссылку на окне уведомлений
+        self.plugin_dir = os.path.dirname(__file__) # Сохранить путь папки плагина
 
         # инициализировать locale
         locale = QSettings().value('locale/userLocale')[0:2]
@@ -168,26 +167,27 @@ class NcfuPlugin:
                 self.infoBar.pushMessage("Слой не выбран", Qgis.Critical )
                 return
 
-            # Объявление переменных
             dp = layer.dataProvider()
-            successMessage = "Координаты обновлены!"
+            points = layer.getFeatures() # получить точки из слоя
 
-            if not ErrorHandler.checkOnErrors(self.infoBar ,layer,dp): return
+            # Закончить если слой не прошел проверку
+            gradErr = ErrorHandler(self.infoBar, layer, dp)
 
-            # Создать градусные атрибуты если их нет
-            if dp.fieldNameIndex('xcoord_grds') == -1 or dp.fieldNameIndex('xcoord_grds') == -1:
+            if not gradErr.checkOnErrsGrad(): return
 
-                DecimalToDegree.createField(dp,'xcoord_grds')
-                DecimalToDegree.createField(dp,'ycoord_grds')
+            # Создать экземпляр класса
+            layGrads = DecimalToDegree(dp, points, countMs)
 
-                successMessage = "Координаты созданы!"
+            # Создать атрибуты градусов
+            layGrads.createField()
+            self.infoBar.pushMessage("Данные обновлены", Qgis.Success )
 
-            # Заполнить атрибуты 
-            DecimalToDegree.fillAttr( layer.getFeatures(), dp, countMs )
+            # Заполнить атрибуты градусов
+            layGrads.fillAttr()
 
             # Обновить данные
             layer.updateFields()
 
             # Уведомить пользователя об успешном выполнении
-            self.infoBar.pushMessage(successMessage, Qgis.Success )
             print('Операция выполнена успешна!')
+            return

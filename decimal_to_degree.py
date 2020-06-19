@@ -1,32 +1,31 @@
-# Импорт QGIS компонента
-from qgis.core import *
+# Импорты QGIS компонентов
+from qgis.core import QgsField
 from qgis.PyQt.QtCore import *
 
-from .error_handler import ErrorHandler # Импорт обработчика ошибок
-from math import trunc                  # Импорт матемаческой функции
+# Импорт собственных классов
+from .convert_to_graduses import convertToGraduses    
+from .error_handler import ErrorHandler
 
 class DecimalToDegree:
     """Класс реализации перевода градусов """
 
-    def __init__(self, dp, points, xcrd, ycrd, countMs):
+    def __init__(self, dp, data, points):
         """Конструктор"""
 
         # Присвоить полученные значения
         self.dp      = dp
         self.points  = points
-        self.countMs = countMs
-        self.xcrd    = 'xcoord'
-        self.ycrd    = 'ycoord'
-        self.xgrds   = 'x_grads'
-        self.ygrds   = 'y_grads'
+        self.xcrd    = data.x_coord.text()
+        self.ycrd    = data.y_coord.text()
+        self.toMs    = data.spinBox.value()
+        self.checked = data.checkBox.checkState()
 
     def createField(self):
         """Создать новое поле"""
 
-        # Деструктуризация
         dp = self.dp
-        x  = self.xgrds
-        y  = self.ygrds
+        x  = 'xgrads'
+        y  = 'ygrads'
 
         # Если атрибуты не были созданы – создать
         if dp.fieldNameIndex( x ) == -1 or dp.fieldNameIndex( y ) == -1:
@@ -35,46 +34,11 @@ class DecimalToDegree:
             dp.addAttributes( [QgsField( x, QVariant.String )] )
             dp.addAttributes( [QgsField( y, QVariant.String )] )
 
-            # Уведомить
+            # Уведомить в консоле
             print('Созданы новые атрибуты ' + x + ', ' + y)
 
         else:
             print('Атрибуты ' + x + ', ' + y + ' уже созданы')
-        
-
-    def convertToGraduses(self, ddd):
-        """Конвертировать в градусы"""
-
-        # Отформатировать секунды и милесекунды
-        def formatSs(ssms):
-            dig = self.countMs
-
-            ss = trunc( ssms )
-            ms = ssms - ss
-
-            ss = f"{ss:02d}"
-            ms = f"{ms:.{dig}f}"
-
-            ssmsStr = str(ss) + str(ms)
-            newSsms = ssmsStr.replace('0.', '\" ')
-
-            return newSsms
-
-        ddd = abs(ddd) # Преобразование отрицательного числа
-
-        # Формула перевода в градусную систему координат
-        dd = trunc(ddd)                     # Граудсы = TRUNC(DDD)    
-        mm = trunc( (ddd - dd) * 60 )       # Минуты  = TRUNC((DDD − DD) * 60)
-        ssms = ( (ddd-dd) * 60 - mm ) * 60  # Сек, мс = ((DDD − DD) * 60 − MM) * 60
-
-        # Скоректировать формат чисел
-        dd = f"{dd:02d}"
-        mm = f"{mm:02d}"
-        ss = formatSs(ssms)
-
-        # Переобразовать в читаемый формат и вернуть
-        grads = str(dd)+'° '+str(mm)+" \' "+ss
-        return grads
 
     def fillAttr(self):
         """Заполнить атрибуты """
@@ -84,8 +48,8 @@ class DecimalToDegree:
         dp     = self.dp
 
         # Получить доступ к атрибутам
-        xAttrInd = dp.fieldNameIndex( self.xgrds )
-        yAttrInd = dp.fieldNameIndex( self.ygrds )
+        xAttrInd = dp.fieldNameIndex( 'xgrads' )
+        yAttrInd = dp.fieldNameIndex( 'ygrads' )
 
         # Цикл с точками
         for p in points:
@@ -94,13 +58,13 @@ class DecimalToDegree:
             valX = p.attribute( self.xcrd )
             valY = p.attribute( self.ycrd )
 
-            # Результат конвертации присвоить новым переменным
-            gradsX = self.convertToGraduses( valX )
-            gradsY = self.convertToGraduses( valY )
+            # Экзамплер класс с градусами
+            grads = convertToGraduses( valX, valY, self.toMs, self.checked )
+            gradsArr = grads.getGrads()
 
             # Присвоить градусы соответствующей точке
-            newXAttr = {xAttrInd : gradsX }
-            newYAttr = {yAttrInd : gradsY }
+            newXAttr = {xAttrInd : gradsArr[1] }
+            newYAttr = {yAttrInd : gradsArr[0] }
 
             # Изменить значения атрибутов
             dp.changeAttributeValues({ p.id(): newXAttr })

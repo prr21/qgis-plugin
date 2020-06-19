@@ -47,6 +47,7 @@ class NcfuPlugin:
     def __init__(self, iface):
         """Конструктор. """
         
+        # Присвоить полученные значения
         self.iface = iface                          # Сохранить ссылку на интерфейс QGIS
         self.infoBar = self.iface.messageBar()      # Сохранить ссылку на окне уведомлений
         self.plugin_dir = os.path.dirname(__file__) # Сохранить путь папки плагина
@@ -139,10 +140,7 @@ class NcfuPlugin:
             self.dlg = NcfuPluginDialog()   # установка диалогового окна
        
     #    Получить значения из диалогового окна
-        countMs = self.dlg.spinBox.value()
-        cmBox   = self.dlg.comboBox
-        x_coord = self.dlg.x_coord
-        y_coord = self.dlg.y_coord
+        cmBox = self.dlg.comboBox
         cmBox.clear()
 
         self.dlg.show() # показать диалоговое окно
@@ -172,12 +170,12 @@ class NcfuPlugin:
             points = layer.getFeatures() # получить точки из слоя
 
             # Закончить если слой не прошел проверку
-            gradErr = ErrorHandler(self.infoBar, layer, dp)
+            gradErr = ErrorHandler(self.infoBar, dp, layer, self.dlg)
 
             if not gradErr.checkOnErrsGrad(): return
 
             # Создать экземпляр класса
-            layGrads = DecimalToDegree(dp, points, x_coord, y_coord, countMs)
+            layGrads = DecimalToDegree(dp, self.dlg, points)
 
             # Создать атрибуты градусов
             layGrads.createField()

@@ -3,13 +3,15 @@ from qgis.core import Qgis
 
 class ErrorHandler:
 
-    def __init__(self, infoBar, layer, dp):
+    def __init__(self, infoBar, dp, layer, data):
         """Конструктор"""
 
         # Присвоить полученные значения
         self.infoBar = infoBar
         self.layer = layer
         self.dp = dp
+        self.x = data.x_coord.text()
+        self.y = data.y_coord.text()
 
     def checkOnErrsGrad(self):
         """Проверка всех условий """
@@ -25,12 +27,12 @@ class ErrorHandler:
             return False
 
         # Проверка наличе необходимых атрибутов
-        elif dp.fieldNameIndex('xcoord') == -1:
-            self.lostAttr('xcoord')
+        elif dp.fieldNameIndex( self.x ) == -1:
+            self.lostAttr( self.x )
             return False
 
-        elif dp.fieldNameIndex('ycoord') == -1:
-            self.lostAttr('ycoord')
+        elif dp.fieldNameIndex( self.y ) == -1:
+            self.lostAttr( self.y )
             return False
 
         else: return True

@@ -12,8 +12,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>380</width>
+    <height>280</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,8 +24,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>400</width>
-    <height>300</height>
+    <width>380</width>
+    <height>270</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -53,9 +53,9 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>260</y>
-     <width>341</width>
+     <x>0</x>
+     <y>240</y>
+     <width>380</width>
      <height>31</height>
     </rect>
    </property>
@@ -72,8 +72,8 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>80</y>
+     <x>10</x>
+     <y>70</y>
      <width>181</width>
      <height>16</height>
     </rect>
@@ -85,8 +85,8 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>170</y>
+     <x>10</x>
+     <y>160</y>
      <width>161</width>
      <height>21</height>
     </rect>
@@ -116,7 +116,7 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>170</y>
+     <y>160</y>
      <width>51</width>
      <height>22</height>
     </rect>
@@ -135,7 +135,7 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>80</y>
+     <y>70</y>
      <width>161</width>
      <height>22</height>
     </rect>
@@ -159,9 +159,9 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>30</y>
-     <width>321</width>
+     <x>0</x>
+     <y>20</y>
+     <width>380</width>
      <height>21</height>
     </rect>
    </property>
@@ -175,12 +175,15 @@
    <property name="text">
     <string>Перевод десятичных координат в градусную</string>
    </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
   </widget>
   <widget class="QLineEdit" name="x_coord">
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>110</y>
+     <y>100</y>
      <width>111</width>
      <height>20</height>
     </rect>
@@ -197,7 +200,7 @@
     <string/>
    </property>
    <property name="text">
-    <string>x_coord</string>
+    <string>xcoord</string>
    </property>
    <property name="clearButtonEnabled">
     <bool>true</bool>
@@ -207,13 +210,13 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>140</y>
+     <y>130</y>
      <width>111</width>
      <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>y_coord</string>
+    <string>ycoord</string>
    </property>
    <property name="clearButtonEnabled">
     <bool>true</bool>
@@ -222,8 +225,8 @@
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>110</y>
+     <x>10</x>
+     <y>100</y>
      <width>181</width>
      <height>16</height>
     </rect>
@@ -235,14 +238,63 @@
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>140</y>
+     <x>10</x>
+     <y>130</y>
      <width>181</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
     <string>Имя аттрибута y координат</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>190</y>
+     <width>70</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>190</y>
+     <width>181</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <stylestrategy>PreferDefault</stylestrategy>
+    </font>
+   </property>
+   <property name="text">
+    <string>Добавить знаки Широт и Долгот</string>
+   </property>
+   <property name="scaledContents">
+    <bool>false</bool>
+   </property>
+   <property name="margin">
+    <number>3</number>
+   </property>
+   <property name="indent">
+    <number>0</number>
+   </property>
+   <property name="openExternalLinks">
+    <bool>false</bool>
    </property>
   </widget>
  </widget>

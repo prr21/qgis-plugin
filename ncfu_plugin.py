@@ -135,16 +135,17 @@ class NcfuPlugin:
         """Главный запуск """
 
         if self.first_start == True:
-            self.first_start = False  # смена значения у первого запуска
-            self.dlg = NcfuPluginDialog() # установка диалогового окна
+            self.first_start = False        # смена значения у первого запуска
+            self.dlg = NcfuPluginDialog()   # установка диалогового окна
        
     #    Получить значения из диалогового окна
         countMs = self.dlg.spinBox.value()
-        cmBox = self.dlg.comboBox
+        cmBox   = self.dlg.comboBox
+        x_coord = self.dlg.x_coord
+        y_coord = self.dlg.y_coord
         cmBox.clear()
 
-        # показать диалоговое окно
-        self.dlg.show()
+        self.dlg.show() # показать диалоговое окно
         
         # Получить все слои QGIS
         allLayers = self.iface.mapCanvas().layers()
@@ -167,7 +168,7 @@ class NcfuPlugin:
                 self.infoBar.pushMessage("Слой не выбран", Qgis.Critical )
                 return
 
-            dp = layer.dataProvider()
+            dp = layer.dataProvider()    # поставщик данных
             points = layer.getFeatures() # получить точки из слоя
 
             # Закончить если слой не прошел проверку
@@ -176,7 +177,7 @@ class NcfuPlugin:
             if not gradErr.checkOnErrsGrad(): return
 
             # Создать экземпляр класса
-            layGrads = DecimalToDegree(dp, points, countMs)
+            layGrads = DecimalToDegree(dp, points, x_coord, y_coord, countMs)
 
             # Создать атрибуты градусов
             layGrads.createField()

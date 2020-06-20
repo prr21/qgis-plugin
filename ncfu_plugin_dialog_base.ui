@@ -202,6 +202,9 @@
    <property name="text">
     <string>xcoord</string>
    </property>
+   <property name="placeholderText">
+    <string comment="Введите название атрибута" extracomment="Обычно называются xcoord"/>
+   </property>
    <property name="clearButtonEnabled">
     <bool>true</bool>
    </property>
@@ -218,6 +221,9 @@
    <property name="text">
     <string>ycoord</string>
    </property>
+   <property name="placeholderText">
+    <string comment="Введите название атрибута" extracomment="Обычно называются ycoord"/>
+   </property>
    <property name="clearButtonEnabled">
     <bool>true</bool>
    </property>
@@ -232,7 +238,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Имя аттрибута x координат</string>
+    <string>Имя атрибута X координат</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_5">
@@ -245,7 +251,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Имя аттрибута y координат</string>
+    <string>Имя атрибута Y координат</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="checkBox">

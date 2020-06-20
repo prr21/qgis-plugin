@@ -22,7 +22,7 @@ class DecimalToDegree:
 
     def createField(self):
         """Создать новое поле"""
-
+        
         dp = self.dp
         x  = 'xgrads'
         y  = 'ygrads'
@@ -36,7 +36,7 @@ class DecimalToDegree:
 
             # Уведомить в консоле
             print('Созданы новые атрибуты ' + x + ', ' + y)
-
+            
         else:
             print('Атрибуты ' + x + ', ' + y + ' уже созданы')
 

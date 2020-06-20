@@ -40,5 +40,5 @@ class ErrorHandler:
     def lostAttr(self, attr):
         """Указать какой атрибут отсутствует """
 
-        self.infoBar.pushMessage("Отсуствуют необходимый атрибут " + attr + " с координатами", Qgis.Warning )
+        self.infoBar.pushMessage('Отсуствуют указанный атрибут \"' + attr + '\" с координатами', Qgis.Warning )
         return

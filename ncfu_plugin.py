@@ -46,7 +46,7 @@ class NcfuPlugin:
 
     def __init__(self, iface):
         """Конструктор. """
-        
+
         # Присвоить полученные значения
         self.iface = iface                          # Сохранить ссылку на интерфейс QGIS
         self.infoBar = self.iface.messageBar()      # Сохранить ссылку на окне уведомлений
@@ -85,8 +85,8 @@ class NcfuPlugin:
         status_tip=None,
         whats_this=None,
         parent=None):
-        """Добавить значок панели инструментов на панель инструментов. """
 
+        """Добавить значок панели инструментов на панель инструментов. """
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
@@ -149,17 +149,18 @@ class NcfuPlugin:
         allLayers = self.iface.mapCanvas().layers()
         activeLayers = []
 
+        # Отобразить все слои в списке
         for l in allLayers:
             activeLayers.append(l.name())
 
+        # Выполнить функционал после нажатия "ОК" в модальном окне
         cmBox.addItems(activeLayers)
         result = self.dlg.exec_()
 
-        # Выполнить функционал после нажатия "ОК" в модальном окне
         if result:
             """ Главный алгоритм действий """
 
-            layer = allLayers[ cmBox.currentIndex() ]  # Получить текущий слой
+            layer = allLayers[ cmBox.currentIndex() ]  # Присвоить выбранный слой
 
             # Если слой не подходит по условиям – отмена
             if not layer:
@@ -171,7 +172,6 @@ class NcfuPlugin:
 
             # Закончить если слой не прошел проверку
             gradErr = ErrorHandler(self.infoBar, dp, layer, self.dlg)
-
             if not gradErr.checkOnErrsGrad(): return
 
             # Создать экземпляр класса
@@ -181,11 +181,8 @@ class NcfuPlugin:
             layGrads.createField()
             self.infoBar.pushMessage("Данные обновлены", Qgis.Success )
 
-            # Заполнить атрибуты градусов
-            layGrads.fillAttr()
-
-            # Обновить данные
-            layer.updateFields()
+            layGrads.fillAttr() # Заполнить атрибуты градусов
+            layer.updateFields() # Обновить данные
 
             # Уведомить пользователя об успешном выполнении
             print('Операция выполнена успешна!')

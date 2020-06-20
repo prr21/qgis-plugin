@@ -16,13 +16,15 @@ class convertToGraduses:
     def getGrads(self):
         """Получить градусы"""
 
-        xWay = '' 
-        yWay = ''
-
+        # Получить подписи сторон света, если нужно
         if ( self.withWays ):
             xWay = self.getWay( self.x, 'x' )
             yWay = self.getWay( self.y, 'y' )
+        else:
+            xWay = '' 
+            yWay = ''
 
+        # Посчитать числа по формуле
         xGrad = self.countByFormule( self.x, xWay )
         yGrad = self.countByFormule( self.y, yWay )
 
@@ -31,6 +33,7 @@ class convertToGraduses:
     def getWay(self, num, axis):
         """Получить сторону света """
 
+        # Распределить каждую часть по соответствию
         if ( num < 0 ):
             way = 'W' if axis == 'x' else 'S'
         else:
@@ -58,16 +61,17 @@ class convertToGraduses:
         return grads    
 
     def formatSs(self, ssms):
-        """Отформатировать секунды и милесекунды """
+        """Отформатировать секунды и миллисекунды """
         dig = self.toMs 
 
         ss = trunc( ssms )      # Секунда
-        ms = ssms - ss          # Милесекунды
+        ms = ssms - ss          # миллисекунды
 
-        ss = f"{ss:02d}"        # 0 в начало если нужно
-        ms = f"{ms:.{dig}f}"    # Сокращение милесекунд
+        ss = f"{ss:02d}"        # 0 в начало числа, если оно однозначное
+        ms = f"{ms:.{dig}f}"    # сократить мс по полученному значению
 
-        ssmsStr = str(ss) + str(ms) + '\"'
+        # Привести в строковый формат
+        ssmsStr = str(ss) + str(ms) + '\"'      
         newSsms = ssmsStr.replace('0.', '.')
 
         return newSsms

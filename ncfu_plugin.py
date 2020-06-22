@@ -117,7 +117,7 @@ class NcfuPlugin:
         icon_path = ':/plugins/ncfu_plugin/icon.png' # путь до значка плагина
         self.add_action(
             icon_path,
-            text=self.tr(u'Work with data'),
+            text=self.tr(u'Convert decimal coordinates to degrees'),
             callback=self.run,
             parent=self.iface.mainWindow())
 

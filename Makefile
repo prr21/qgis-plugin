@@ -1,7 +1,7 @@
 #/***************************************************************************
 # NcfuPlugin
 #
-# Plugin with the many options
+# Convert decimal coordinates to degrees
 #							 -------------------
 #		begin				: 2020-05-14
 #		git sha				: $Format:%H$

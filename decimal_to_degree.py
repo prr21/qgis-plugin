@@ -2,9 +2,7 @@
 from qgis.core import QgsField
 from qgis.PyQt.QtCore import *
 
-# Импорт собственных классов
-from .convert_to_graduses import convertToGraduses    
-from .error_handler import ErrorHandler
+from .convert_to_graduses import convertToGraduses # Импорт класса конвертации
 
 class DecimalToDegree:
     """Класс реализации перевода градусов """
@@ -22,37 +20,27 @@ class DecimalToDegree:
 
     def createField(self):
         """Создать новое поле"""
-        
-        dp = self.dp
-        x  = 'xgrads'
-        y  = 'ygrads'
 
         # Если атрибуты не были созданы – создать
-        if dp.fieldNameIndex( x ) == -1 or dp.fieldNameIndex( y ) == -1:
+        if dp.fieldNameIndex( 'xgrads' ) == -1 or dp.fieldNameIndex( 'ygrads' ) == -1:
             
             # Через формулу API QGIS создать новые атрибуты
-            dp.addAttributes( [QgsField( x, QVariant.String )] )
-            dp.addAttributes( [QgsField( y, QVariant.String )] )
+            dp.addAttributes( [QgsField( 'xgrads', QVariant.String )] )
+            dp.addAttributes( [QgsField( 'ygrads', QVariant.String )] )
 
             # Уведомить в консоле
-            print('Созданы новые атрибуты ' + x + ', ' + y)
-            
+            print('Созданы новые атрибуты xgrads ygrads')
         else:
-            print('Атрибуты ' + x + ', ' + y + ' уже созданы')
+            print('Атрибуты xgrads, ygrads уже созданы')
 
     def fillAttr(self):
         """Заполнить атрибуты """
-        
-        # Деструктуризация
-        points = self.points
-        dp     = self.dp
 
         # Получить доступ к атрибутам
-        xAttrInd = dp.fieldNameIndex( 'xgrads' )
-        yAttrInd = dp.fieldNameIndex( 'ygrads' )
+        xAttrInd = self.dp.fieldNameIndex( 'xgrads' )
+        yAttrInd = self.dp.fieldNameIndex( 'ygrads' )
 
-        # Цикл с точками
-        for p in points:
+        for p in self.points:
 
             # Получить значения десятичных координат
             valX = p.attribute( self.xcrd )
@@ -67,5 +55,5 @@ class DecimalToDegree:
             newYAttr = {yAttrInd : gradsArr[0] }
 
             # Изменить значения атрибутов
-            dp.changeAttributeValues({ p.id(): newXAttr })
-            dp.changeAttributeValues({ p.id(): newYAttr })
+            self.dp.changeAttributeValues({ p.id(): newXAttr })
+            self.dp.changeAttributeValues({ p.id(): newYAttr })

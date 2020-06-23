@@ -26,7 +26,7 @@ class ErrorHandler:
             infoBar.pushMessage("Выберите слой с точками!", Qgis.Warning )
             return False
 
-        # Проверка наличе необходимых атрибутов
+        # Проверка наличия необходимых атрибутов
         elif dp.fieldNameIndex( self.x ) == -1:
             self.lostAttr( self.x )
             return False
@@ -40,5 +40,6 @@ class ErrorHandler:
     def lostAttr(self, attr):
         """Указать какой атрибут отсутствует """
 
+        # Прислать уведомление с ошибкой
         self.infoBar.pushMessage('Отсуствуют указанный атрибут \"' + attr + '\" с координатами', Qgis.Warning )
         return

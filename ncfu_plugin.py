@@ -114,9 +114,8 @@ class NcfuPlugin:
     def initGui(self):
         """Создать пункты меню и значки панели инструментов внутри графического интерфейса QGIS."""
 
-        icon_path = ':/plugins/ncfu_plugin/icon.png' # путь до значка плагина
         self.add_action(
-            icon_path,
+            QIcon(os.path.join(os.path.dirname(__file__), "icon.png")),
             text=self.tr(u'Convert decimal coordinates to degrees'),
             callback=self.run,
             parent=self.iface.mainWindow())

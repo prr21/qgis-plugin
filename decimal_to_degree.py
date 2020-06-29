@@ -21,6 +21,9 @@ class DecimalToDegree:
     def createField(self):
         """Создать новое поле"""
 
+        # Деструктуризация
+        dp = self.dp
+        
         # Если атрибуты не были созданы – создать
         if dp.fieldNameIndex( 'xgrads' ) == -1 or dp.fieldNameIndex( 'ygrads' ) == -1:
             
